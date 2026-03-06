@@ -119,3 +119,15 @@ vim.api.nvim_create_autocmd('User', {
   once = true,
   callback = function() vim.opt.clipboard = 'unnamedplus' end,
 })
+
+-- Defer ShaDa reading to speed up startup (from nvim)
+local shada = vim.o.shada
+vim.o.shada = ''
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'VeryLazy',
+  once = true,
+  callback = function()
+    vim.o.shada = shada
+    pcall(vim.cmd.rshada, { bang = true })
+  end,
+})

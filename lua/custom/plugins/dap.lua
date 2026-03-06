@@ -18,7 +18,7 @@ return {
     { '<leader>du', function() require('dapui').toggle() end, desc = '[D]ebug: Toggle [U]I' },
     -- Breakpoints
     { '<leader>db', function() require('dap').toggle_breakpoint() end, desc = '[D]ebug: Toggle [B]reakpoint' },
-    { '<leader>dB', function() require('dap').set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, desc = '[D]ebug: Set [B]reakpoint' },
+    { '<leader>dB', function() require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ') end, desc = '[D]ebug: Set [B]reakpoint' },
     -- Session control
     { '<leader>dC', function() require('dap').run_to_cursor() end, desc = '[D]ebug: Run to [C]ursor' },
     { '<leader>dt', function() require('dap').terminate() end, desc = '[D]ebug: [T]erminate' },
@@ -26,40 +26,39 @@ return {
     { '<leader>dl', function() require('dap').run_last() end, desc = '[D]ebug: Run [L]ast' },
   },
   config = function()
-    local dap = require('dap')
-    local dapui = require('dapui')
+    local dap = require 'dap'
+    local dapui = require 'dapui'
+
+    for name, sign in pairs(require('util').icons.dap) do
+      sign = type(sign) == 'table' and sign or { sign }
+      vim.fn.sign_define('Dap' .. name, { text = sign[1], texthl = sign[2] or 'DiagnosticInfo', linehl = sign[3], numhl = sign[3] })
+    end
 
     -- DAP UI setup
     dapui.setup {
-      icons = { expanded = '', collapsed = '', current_frame = '' },
-      controls = {
-        icons = {
-          pause = '',
-          play = '',
-          step_into = '',
-          step_over = '',
-          step_out = '',
-          step_back = '',
-          run_last = '',
-          terminate = '',
-          disconnect = '',
-        },
-      },
+      -- icons = { expanded = '', collapsed = '', current_frame = '' },
+      -- controls = {
+      --   icons = {
+      --     pause = '',
+      --     play = '',
+      --     step_into = '',
+      --     step_over = '',
+      --     step_out = '',
+      --     step_back = '',
+      --     run_last = '',
+      --     terminate = '',
+      --     disconnect = '',
+      --   },
+      -- },
     }
 
     -- Virtual text
     require('nvim-dap-virtual-text').setup {}
 
     -- DAP listeners
-    dap.listeners.after.event_initialized['dapui_config'] = function()
-      dapui.open()
-    end
-    dap.listeners.before.event_terminated['dapui_config'] = function()
-      dapui.close()
-    end
-    dap.listeners.before.event_exited['dapui_config'] = function()
-      dapui.close()
-    end
+    dap.listeners.after.event_initialized['dapui_config'] = function() dapui.open() end
+    dap.listeners.before.event_terminated['dapui_config'] = function() dapui.close() end
+    dap.listeners.before.event_exited['dapui_config'] = function() dapui.close() end
 
     -- Go debugger setup
     require('dap-go').setup {}
@@ -68,7 +67,7 @@ return {
     require('dap-vscode-js').setup {
       -- Path to vscode-js-debug installation
       -- Mason installs it to: ~/.local/share/nvim/mason/packages/js-debug-adapter
-      debugger_path = vim.fn.stdpath('data') .. '/mason/packages/js-debug-adapter',
+      debugger_path = vim.fn.stdpath 'data' .. '/mason/packages/js-debug-adapter',
       -- Which adapters to configure
       adapters = { 'pwa-node', 'pwa-chrome', 'pwa-msedge', 'node-terminal', 'pwa-extensionHost' },
     }

@@ -6,17 +6,22 @@ return {
     -- Setup snacks.nvim with the provided options
     require('snacks').setup(opts)
 
-    -- Load package scripts module and setup keymaps
-    local package_scripts = require 'custom.package-scripts'
-    vim.keymap.set('n', '<leader>ps', package_scripts.show_scripts_picker, { desc = '[P]ackage [S]cripts' })
-    vim.keymap.set('n', '<leader>pb', function()
-      local pkg_json = package_scripts.find_package_json()
-      if not pkg_json then
-        vim.notify('No package.json found', vim.log.levels.WARN)
-        return
-      end
-      package_scripts.show_scripts_picker()
-    end, { desc = '[P]ackage Script [B]ackground' })
+    vim.api.nvim_create_autocmd('User', {
+      pattern = 'VeryLazy',
+      callback = function()
+        -- Load package scripts module and setup keymaps
+        local package_scripts = require 'custom.package-scripts'
+        vim.keymap.set('n', '<leader>ps', package_scripts.show_scripts_picker, { desc = '[P]ackage [S]cripts' })
+        vim.keymap.set('n', '<leader>pb', function()
+          local pkg_json = package_scripts.find_package_json()
+          if not pkg_json then
+            vim.notify('No package.json found', vim.log.levels.WARN)
+            return
+          end
+          package_scripts.show_scripts_picker()
+        end, { desc = '[P]ackage Script [B]ackground' })
+      end,
+    })
   end,
   opts = {
     -- Styles for transparency
@@ -94,7 +99,8 @@ return {
               {
                 icon = ' ',
                 title = 'Git Status',
-                cmd = 'git --no-pager diff --stat -B -M -C',
+                -- cmd = 'git --no-pager diff --stat -B -M -C',
+                cmd = 'git status --short && echo "---" && git diff --stat --cached 2>/dev/null || echo "No staged changes"',
                 height = 10,
               },
             }

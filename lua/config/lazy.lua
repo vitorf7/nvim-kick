@@ -29,13 +29,15 @@ vim.api.nvim_create_autocmd('User', {
 
 -- [[ Configure and install plugins ]]
 require('lazy').setup {
+  defaults = {
+    lazy = true,
+  },
   ui = {
     backdrop = 100,
   },
   spec = {
     { import = 'custom.plugins' },
   },
-  -- checker = { enabled = true, notify = true, frequency = 86400 }, -- check for plugin updates daily, silently
   checker = { enabled = true },
   performance = {
     rtp = {
