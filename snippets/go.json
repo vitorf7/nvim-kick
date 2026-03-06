@@ -1,0 +1,15 @@
+{
+  "Function with error handling": {
+    "prefix": "fnerr",
+    "body": [
+      "func ${1:name}(${2:params}) (${3:returns}) {",
+      "  ${4:// implementation}",
+      "  if err != nil {",
+      "    return ${5:nil}, err",
+      "  }",
+      "  return ${6:result}, nil",
+      "}"
+    ],
+    "description": "Function with error handling pattern"
+  }
+}

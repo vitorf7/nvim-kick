@@ -1,0 +1,17 @@
+{
+  "Current date": {
+    "prefix": "date",
+    "body": "${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}",
+    "description": "Insert current date"
+  },
+  "Current datetime": {
+    "prefix": "datetime",
+    "body": "${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE} ${CURRENT_HOUR}:${CURRENT_MINUTE}",
+    "description": "Insert current datetime"
+  },
+  "Author info": {
+    "prefix": "author",
+    "body": "Author: ${1:Your Name} <${2:email@example.com}>",
+    "description": "Insert author information"
+  }
+}

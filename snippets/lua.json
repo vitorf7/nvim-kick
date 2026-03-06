@@ -1,0 +1,12 @@
+{
+  "TODO comment": {
+    "prefix": "todo",
+    "body": "-- TODO: $1",
+    "description": "Add a TODO comment"
+  },
+  "Print with inspect": {
+    "prefix": "pp",
+    "body": "print(vim.inspect($1))",
+    "description": "Print with vim.inspect"
+  }
+}
