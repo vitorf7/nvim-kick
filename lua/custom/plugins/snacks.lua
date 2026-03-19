@@ -75,7 +75,7 @@ return {
             pane = 2,
             section = 'terminal',
             height = 9,
-            cmd = '',
+            cmd = 'echo ""',
           },
           {
             pane = 2,
