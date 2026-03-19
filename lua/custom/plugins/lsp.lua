@@ -359,12 +359,22 @@ return {
       'json-lsp',
     })
 
-    require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+    require('mason-tool-installer').setup { ensure_installed = ensure_installed, run_on_startup = true }
 
     -- Setup mason-lspconfig to auto-enable servers
     require('mason-lspconfig').setup {
       automatic_enable = true,
     }
+
+    local ok, masonToolInstaller = pcall(require, 'mason-tool-installer')
+    if ok then
+      masonToolInstaller.setup {
+        ensure_installed = ensure_installed,
+        run_on_startup = true,
+      }
+
+      masonToolInstaller.check_install(false, true)
+    end
 
     -- Configure servers (mason-lspconfig will auto-enable them)
     for name, config in pairs(servers) do
