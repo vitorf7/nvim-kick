@@ -180,6 +180,8 @@ return {
     { '<leader>ts', function() require('neotest').summary.toggle() end, desc = 'Toggle Summary' },
     { '<leader>ta', function() require('neotest').run.attach() end, desc = '[T]est [A]ttach' },
     { '<leader>to', function() require('neotest').output.open { enter = true } end, desc = '[T]est [O]utput' },
+    { '<leader>tp', function() require('neotest').output_panel.toggle() end, desc = '[T]est Output [P]anel Toggle' },
+    { '<leader>tc', function() require('neotest').output_panel.clear() end, desc = '[T]est Output Panel [C]lear' },
     { '<leader>tS', function() require('neotest').run.stop() end, desc = 'Stop' },
     { '<leader>tw', function() require('neotest').watch.toggle() end, desc = '[T]est [W]atch mode' },
     { '<leader>tl', function() require('neotest').run.run_last() end, desc = 'Run [L]ast test' },
