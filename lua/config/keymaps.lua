@@ -4,13 +4,11 @@
 -- Clear highlights on search when pressing <Esc>
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- Save file
-vim.keymap.set('n', '<leader>w', '<cmd>w<CR>', { desc = '[W]rite/Save file' })
-
 -- Alternative escape
 vim.keymap.set('i', 'jj', '<Esc>', { desc = 'Escape with jj' })
 
 -- Save shortcuts
+vim.keymap.set('n', '<leader>w', '<cmd>w<CR>', { desc = '[W]rite/Save file' })
 vim.keymap.set('n', '<C-s>', '<cmd>w!<CR>', { desc = 'Save buffer' })
 vim.keymap.set('n', '<C-S-s>', '<cmd>wa!<CR>', { desc = 'Save all buffers' })
 
@@ -42,26 +40,18 @@ vim.keymap.set('t', '<C-k>', '<C-\\><C-n><C-w>k', { desc = 'Go to upper window' 
 vim.keymap.set('t', '<C-l>', '<C-\\><C-n><C-w>l', { desc = 'Go to right window' })
 vim.keymap.set('t', '<C-/>', '<C-\\><C-n><cmd>Snacks.terminal()<cr>', { desc = 'Hide terminal' })
 
--- Text movement - move lines up/down with Alt
-vim.keymap.set('n', '<A-j>', ':m .+1<CR>==', { desc = 'Move line down' })
-vim.keymap.set('n', '<A-k>', ':m .-2<CR>==', { desc = 'Move line up' })
-vim.keymap.set('i', '<A-j>', '<Esc>:m .+1<CR>==gi', { desc = 'Move line down' })
-vim.keymap.set('i', '<A-k>', '<Esc>:m .-2<CR>==gi', { desc = 'Move line up' })
-vim.keymap.set('v', '<A-j>', ":m '>+1<CR>gv=gv", { desc = 'Move selection down' })
-vim.keymap.set('v', '<A-k>', ":m '<-2<CR>gv=gv", { desc = 'Move selection up' })
+-- Text movement - move lines up/down with J/K in visual mode
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", { desc = 'Move selection up' })
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv", { desc = 'Move selection down' })
 
 -- LSP reference navigation
 vim.keymap.set('n', ']]', function()
   local ok, words = pcall(require, 'snacks.words')
-  if ok then
-    words.jump(vim.v.count1)
-  end
+  if ok then words.jump(vim.v.count1) end
 end, { desc = 'Next LSP reference' })
 vim.keymap.set('n', '[[', function()
   local ok, words = pcall(require, 'snacks.words')
-  if ok then
-    words.jump(-vim.v.count1)
-  end
+  if ok then words.jump(-vim.v.count1) end
 end, { desc = 'Previous LSP reference' })
 
 -- Code lens keymaps (set in LSP attach)
@@ -69,16 +59,14 @@ end, { desc = 'Previous LSP reference' })
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('kickstart-lsp-attach-keymaps', { clear = true }),
   callback = function(event)
-    local map = function(keys, func, desc)
-      vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
-    end
-    
+    local map = function(keys, func, desc) vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc }) end
+
     -- Code lens
     map('<leader>lc', vim.lsp.codelens.run, '[C]ode [L]ens Run')
     map('<leader>lC', vim.lsp.codelens.refresh, '[C]ode [L]ens Refresh')
-    
+
     -- Float diagnostic for current line
-    map('gl', function() vim.diagnostic.open_float({ scope = 'line' }) end, '[G]et [L]ine diagnostic')
+    map('gl', function() vim.diagnostic.open_float { scope = 'line' } end, '[G]et [L]ine diagnostic')
   end,
 })
 
