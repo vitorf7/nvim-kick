@@ -49,3 +49,16 @@ vim.api.nvim_create_autocmd('BufWritePost', {
   pattern = { 'aerospace.toml' },
   command = '!aerospace reload-config',
 })
+
+-- Auto-organize TypeScript/JavaScript imports on save
+vim.api.nvim_create_autocmd('BufWritePre', {
+  pattern = { '*.ts', '*.tsx', '*.js', '*.jsx' },
+  group = vim.api.nvim_create_augroup('typescript-imports', { clear = true }),
+  callback = function()
+    -- Only run if typescript-tools is loaded
+    local ok, tstools = pcall(require, 'typescript-tools.api')
+    if ok then
+      tstools.organize_imports(false)
+    end
+  end,
+})

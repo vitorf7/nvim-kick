@@ -17,7 +17,9 @@ return {
       underline = { severity = vim.diagnostic.severity.ERROR },
       virtual_text = true,
       virtual_lines = false,
-      jump = { float = true },
+      jump = {
+        on_jump = function() vim.diagnostic.open_float() end,
+      },
     }
 
     -- LSP attach autocommand
@@ -52,7 +54,7 @@ return {
 
         -- ESLint specific keymaps
         if client and client.name == 'eslint' then
-          map('<leader>le', function() vim.cmd 'EslintFixAll' end, '[L]SP: [E]SLint Fix All')
+          map('<leader>le', function() vim.cmd 'LspEslintFixAll' end, '[L]SP: [E]SLint Fix All')
           map(
             '<leader>lE',
             function()
@@ -216,63 +218,6 @@ return {
                 vim.env.VIMRUNTIME,
                 vim.fn.stdpath 'config',
               },
-            },
-          },
-        },
-      },
-      -- TypeScript/JavaScript
-      ts_ls = {
-        settings = {
-          typescript = {
-            inlayHints = {
-              includeInlayParameterNameHints = 'all',
-              includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-              includeInlayFunctionParameterTypeHints = true,
-              includeInlayVariableTypeHints = true,
-              includeInlayPropertyDeclarationTypeHints = true,
-              includeInlayFunctionLikeReturnTypeHints = true,
-              includeInlayEnumMemberValueHints = true,
-            },
-            -- Auto-import and completion preferences
-            preferences = {
-              importModuleSpecifier = 'auto',
-              importModuleSpecifierEnding = 'auto',
-              includePackageJsonAutoImports = 'auto',
-              autoImportFileExcludePatterns = {
-                'node_modules/*',
-                '.git/*',
-                '**/dist/**',
-                '**/build/**',
-              },
-            },
-            completions = {
-              completeFunctionCalls = true,
-            },
-          },
-          javascript = {
-            inlayHints = {
-              includeInlayParameterNameHints = 'all',
-              includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-              includeInlayFunctionParameterTypeHints = true,
-              includeInlayVariableTypeHints = true,
-              includeInlayPropertyDeclarationTypeHints = true,
-              includeInlayFunctionLikeReturnTypeHints = true,
-              includeInlayEnumMemberValueHints = true,
-            },
-            -- Auto-import and completion preferences
-            preferences = {
-              importModuleSpecifier = 'auto',
-              importModuleSpecifierEnding = 'auto',
-              includePackageJsonAutoImports = 'auto',
-              autoImportFileExcludePatterns = {
-                'node_modules/*',
-                '.git/*',
-                '**/dist/**',
-                '**/build/**',
-              },
-            },
-            completions = {
-              completeFunctionCalls = true,
             },
           },
         },

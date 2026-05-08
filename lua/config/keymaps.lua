@@ -17,12 +17,12 @@ vim.keymap.set('n', '<C-q>', function() Snacks.bufdelete.delete() end, { desc = 
 vim.keymap.set('n', '<leader>q', function() Snacks.bufdelete.other() end, { desc = 'Close all buffers except current' })
 
 -- Diagnostic navigation
-vim.keymap.set('n', '[d', function() vim.diagnostic.jump { count = -1, float = true } end, { desc = 'Prev diagnostic' })
-vim.keymap.set('n', ']d', function() vim.diagnostic.jump { count = 1, float = true } end, { desc = 'Next diagnostic' })
-vim.keymap.set('n', '[e', function() vim.diagnostic.jump { count = -1, float = true, severity = vim.diagnostic.severity.ERROR } end, { desc = 'Prev error' })
-vim.keymap.set('n', ']e', function() vim.diagnostic.jump { count = 1, float = true, severity = vim.diagnostic.severity.ERROR } end, { desc = 'Next error' })
-vim.keymap.set('n', '[w', function() vim.diagnostic.jump { count = -1, float = true, severity = vim.diagnostic.severity.WARN } end, { desc = 'Prev warning' })
-vim.keymap.set('n', ']w', function() vim.diagnostic.jump { count = 1, float = true, severity = vim.diagnostic.severity.WARN } end, { desc = 'Next warning' })
+vim.keymap.set('n', '[d', function() vim.diagnostic.jump { count = -1 } end, { desc = 'Prev diagnostic' })
+vim.keymap.set('n', ']d', function() vim.diagnostic.jump { count = 1 } end, { desc = 'Next diagnostic' })
+vim.keymap.set('n', '[e', function() vim.diagnostic.jump { count = -1, severity = vim.diagnostic.severity.ERROR } end, { desc = 'Prev error' })
+vim.keymap.set('n', ']e', function() vim.diagnostic.jump { count = 1, severity = vim.diagnostic.severity.ERROR } end, { desc = 'Next error' })
+vim.keymap.set('n', '[w', function() vim.diagnostic.jump { count = -1, severity = vim.diagnostic.severity.WARN } end, { desc = 'Prev warning' })
+vim.keymap.set('n', ']w', function() vim.diagnostic.jump { count = 1, severity = vim.diagnostic.severity.WARN } end, { desc = 'Next warning' })
 
 -- Quickfix navigation
 vim.keymap.set('n', '[q', vim.cmd.cprev, { desc = 'Prev quickfix' })
