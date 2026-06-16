@@ -270,6 +270,9 @@ return {
         filetypes = { 'docker-compose.yml', 'docker-compose.yaml' },
       },
       harper_ls = {},
+      qmlls = {
+        cmd = { 'qmlls', '-I', '/usr/lib/qt6/qml', '-E' },
+      },
     }
 
     -- Ensure installed tools
@@ -302,6 +305,7 @@ return {
       'typescript-language-server',
       'yaml-language-server',
       'json-lsp',
+      'qmlls',
     })
 
     require('mason-tool-installer').setup { ensure_installed = ensure_installed, run_on_startup = true }
