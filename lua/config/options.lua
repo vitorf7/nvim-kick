@@ -129,5 +129,14 @@ vim.api.nvim_create_autocmd('User', {
   callback = function()
     vim.o.shada = shada
     pcall(vim.cmd.rshada, { bang = true })
+    -- Refresh the dashboard outside the autocmd callback chain so recent_files
+    -- picks up vim.v.oldfiles now that ShaDa has been read.
+    vim.schedule(function()
+      pcall(function()
+        if Snacks and Snacks.dashboard then
+          Snacks.dashboard.update()
+        end
+      end)
+    end)
   end,
 })
