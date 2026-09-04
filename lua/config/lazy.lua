@@ -13,6 +13,37 @@ end
 local rtp = vim.opt.rtp
 rtp:prepend(lazypath)
 
+-- kevinhwang91/nvim-ufo (via kevinhwang91/promise-async) and
+-- ThePrimeagen/refactoring.nvim (via lewis6991/async.nvim) both define a
+-- Lua module named `async`, with incompatible APIs. Each plugin has several
+-- submodules that lazily `require('async')` at different, unpredictable
+-- times throughout the session (not just once at startup), so a single
+-- global `package.loaded.async` cache slot can't serve both correctly --
+-- whichever plugin's module wins the cache first, the other breaks later
+-- with errors like "attempt to call upvalue 'async' (a table value)" or
+-- "attempt to call field 'wrap' (a nil value)".
+-- Intercept `require('async')` globally and resolve it fresh (bypassing the
+-- cache) based on which plugin's file is asking, before any plugin loads.
+do
+  local original_require = require
+  local data_dir = vim.fn.stdpath 'data'
+  local promise_async_path = data_dir .. '/lazy/promise-async/lua/async.lua'
+  local lewis_async_path = data_dir .. '/lazy/async.nvim/lua/async.lua'
+
+  _G.require = function(modname)
+    if modname == 'async' then
+      local info = debug.getinfo(2, 'S')
+      local caller = info and info.source or ''
+      if caller:find('nvim-ufo', 1, true) or caller:find('promise-async', 1, true) then
+        return dofile(promise_async_path)
+      elseif caller:find('refactoring.nvim', 1, true) or caller:find('async.nvim', 1, true) then
+        return dofile(lewis_async_path)
+      end
+    end
+    return original_require(modname)
+  end
+end
+
 vim.api.nvim_create_autocmd('User', {
   pattern = 'VeryLazy',
   callback = function()
