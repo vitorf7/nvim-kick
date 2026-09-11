@@ -273,6 +273,15 @@ return {
       qmlls = {
         cmd = { 'qmlls', '-I', '/usr/lib/qt6/qml', '-E' },
       },
+      nil_ls = {
+        settings = {
+          ['nil'] = {
+            formatting = {
+              command = { 'alejandra', '-qq', '-' },
+            },
+          },
+        },
+      },
     }
 
     -- Ensure installed tools
@@ -306,6 +315,10 @@ return {
       'yaml-language-server',
       'json-lsp',
       'qmlls',
+
+      -- nix
+      'alejandra',
+      'nixpkgs-fmt',
     })
 
     require('mason-tool-installer').setup { ensure_installed = ensure_installed, run_on_startup = true }
