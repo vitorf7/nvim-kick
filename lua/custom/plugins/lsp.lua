@@ -185,22 +185,6 @@ return {
             semanticTokens = true,
           },
         },
-        -- override root_path for issue: https://github.com/golang/go/issues/63536
-        root_path = function(fname)
-          local root_files = {
-            'tools/go.mod', -- monorepo override so root_path is ./monorepo/go/** not ./monorepo/**
-            'go.work',
-            'go.mod',
-            '.git',
-            '.golangci.yaml',
-            '.golangci.yml',
-            'flake.nix',
-            'flake.lock',
-          }
-
-          -- return first parent dir that homes a found root_file
-          return lspconfig.util.root_pattern(unpack(root_files))(fname) or vim.fs.dirname(fname)
-        end,
       },
       -- Lua
       lua_ls = {

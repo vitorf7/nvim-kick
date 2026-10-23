@@ -20,14 +20,18 @@ return {
     'marilari88/neotest-vitest',
   },
   opts = {
-    log_level = vim.log.levels.DEBUG,
+    log_level = vim.log.levels.WARN,
     adapters = {
       'neotest-plenary',
       -- Go adapter
       ['neotest-golang'] = {
         runner = 'gotestsum',
-        go_test_args = { '-v', '-race', '-count=1', '-timeout=60s', '-coverprofile=' .. vim.fn.getcwd() .. '/coverage.out' },
+        go_test_args = { '-v', '-race', '-count=1', '-timeout=60s', '-coverprofile=' .. vim.fn.stdpath 'cache' .. '/neotest-coverage.out' },
         dap_go_enabled = true,
+        -- go-mono uses testify suites (suite.Run) in ~136 test files, so this
+        -- must stay on. The first test run each session parses every _test.go
+        -- under cwd for the suite lookup — open nvim in the service dir, not
+        -- the monorepo root, to keep that fast.
         testify_enabled = true,
         colorize_test_output = true,
         gotestsum_args = { '--format=standard-verbose' },
@@ -101,9 +105,10 @@ return {
         end
       end,
     },
-    -- Configure discovery to prefer Jest files over Vitest
+    -- Off: with it on neotest crawls all of cwd for test files up front, which
+    -- freezes nvim in go-mono. Tests are parsed when a file is opened or run instead.
     discovery = {
-      enabled = true,
+      enabled = false,
     },
     -- Running configuration
     running = {
@@ -111,6 +116,14 @@ return {
     },
   },
   config = function(_, opts)
+    -- The ~/.config/bin/nvim wrapper pins CGO_ENABLED=0 so Mason `go install`
+    -- builds stay static; neotest-golang's -race validation and `go test -race`
+    -- both need CGO. neotest lazy-loads on the first test keymap (after startup
+    -- Mason installs), so flipping it here is safe. A mid-session
+    -- :MasonInstall of a Go tool after running tests would build dynamic —
+    -- the daily nvfix timer heals those.
+    vim.fn.setenv('CGO_ENABLED', '1')
+
     local neotest_ns = vim.api.nvim_create_namespace 'neotest'
     vim.diagnostic.config({
       virtual_text = {

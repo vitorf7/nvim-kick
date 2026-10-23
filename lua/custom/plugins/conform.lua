@@ -51,32 +51,39 @@ return {
         lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
       }
     end,
+    formatters = {
+      -- Applies the `formatters:` block of the nearest .golangci.yaml (gci, gofmt, gofumpt, goimports)
+      golangci_lint_fmt = {
+        command = 'golangci-lint',
+        args = { 'fmt', '--stdin' },
+        stdin = true,
+        -- plain vim.fs call: `opts` is evaluated before the lazy-loaded conform is on the rtp
+        cwd = function(_, ctx) return vim.fs.root(ctx.dirname, { '.golangci.yaml', '.golangci.yml' }) end,
+        require_cwd = true,
+      },
+    },
     formatters_by_ft = {
       lua = { 'stylua' },
       go = function(bufnr)
-        local configArgs = { 'goimports', 'gofumpt' }
-        local ctx = require('conform.runner').build_context(bufnr, configArgs)
+        local ctx = require('conform.runner').build_context(bufnr, 'golangci_lint_fmt')
 
-        local telecomFixedLine = '(telecom%-fixed%-line)'
+        -- Repos with a golangci config (e.g. go-mono) get formatted by golangci-lint itself,
+        -- so gci sections, gofumpt and the gofmt rewrite rules always match what CI lints.
+        local hasGolangciConfig = vim.fs.find({ '.golangci.yaml', '.golangci.yml' }, { path = ctx.dirname, upward = true })[1] ~= nil
 
-        local startIndexTelecom, _ = string.find(ctx.dirname, telecomFixedLine)
-
-        if startIndexTelecom == nil then table.insert(configArgs, 'gci') end
+        local configArgs
+        if hasGolangciConfig then
+          configArgs = { 'golangci_lint_fmt' }
+        else
+          configArgs = { 'goimports', 'gofumpt' }
+          if string.find(ctx.dirname, '(telecom%-fixed%-line)') == nil then table.insert(configArgs, 'gci') end
+        end
 
         local goMonoPathSeach1 = '(go%-mono)/(teams)/(contact%-channels)'
         local goMonoPathSeach2 = '(go%-mono)/(teams)/(help%-and%-support)'
 
-        local startIndex1, _ = string.find(ctx.dirname, goMonoPathSeach1)
-        local startIndex2, _ = string.find(ctx.dirname, goMonoPathSeach2)
+        if string.find(ctx.dirname, goMonoPathSeach1) or string.find(ctx.dirname, goMonoPathSeach2) then table.insert(configArgs, 'golines') end
 
-        -- Snacks.debug('startIndex1 startIndex2', startIndex1, startIndex2)
-        local startIndex = startIndex1 or startIndex2
-        -- Snacks.debug('startIndex', startIndex)
-        -- Snacks.debug('ctx.dirname', ctx.dirname)
-
-        if startIndex ~= nil then table.insert(configArgs, 'golines') end
-
-        Snacks.debug('config', configArgs)
         return configArgs
       end,
       graphql = { 'prettierd' },
